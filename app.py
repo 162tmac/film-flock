@@ -22,6 +22,26 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/create")
+def create():
+    return render_template("create.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/discover")
+def discover():
+    return render_template("discover.html")
+
+
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
