@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Film Flock | Flock{% endblock %}
+{% block body %}
+  <div class="min-vh-100 py-4">
+  
+    <div class="container">
+      <div class="container row p-0">
+        <div class="container">
+          <h1>{{ flock[0]["name"] }}</h1>
+          <div class="container p-0">
+            {% for film in flock[0]["films"] %}
+              <a href={{ url_for("film_view", id=film["_id"]) }} class="row row-cols-1 row-cols-lg-4 g-2 g-lg-2">
+                <div class="col mb-4">
+                  <div class="card">
+                    <img src={{ film["poster"] if film["poster"] else "../static/flock-of-birds.png" }} class="card-img-top h-75" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ film["title"] }}</h5>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

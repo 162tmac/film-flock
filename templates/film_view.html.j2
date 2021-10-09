@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Film Flock | Film{% endblock %}
+{% block body %}
+  <div class="min-vh-100 m-5">
+    <div class="container">
+      <div class="d-flex">
+        <img class="w-50" src={{ film.poster }} />
+        <div class="ml-5 mt-5">
+          <h1>{{ film.title }}</h1>
+          <p>
+            Directed by: 
+            {% for director in film.directors %}
+              {{ director }}
+              {{ ", " if not loop.last else "" }}
+            {% endfor %}
+          </p>
+          <p>
+            Genres: 
+            {% for genre in film.genres %}
+              {{ genre }}
+              {{ ", " if not loop.last else "" }}
+            {% endfor %}
+          </p>
+          <p>Running time: {{ film.runtime }} mins</p>
+          <p>Year: {{ film.year }}</p>
+          <p>Description: {{ film.plot }}</p>
+          <button class="btn btn-primary">Add to collection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
