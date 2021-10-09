@@ -8,7 +8,11 @@
         <input class="form-control w-50 mr-3" type="text" name="query" id="search" placeholder="Search Movies">
         <button class="btn btn-primary" type="submit" >Search</button>
       </form>
-      {% if results %}
+      {% if results == null %}
+        <p class="mt-4 ml-2">Your results will appear here.</p>
+      {% elif results|length == 0 %}
+        <p class="mt-4 ml-2">Your search returned no results</p>
+      {% else %}
         <div class="container p-0 mt-2">
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-5 g-2 g-lg-2">
             {% for film in results %}
@@ -23,8 +27,6 @@
             {% endfor %}
           </div>
         </div>
-      {% else %}
-        <p class="mt-5 ml-2">Your results will appear here.</p>
       {% endif %}
     </div>
   </div>
