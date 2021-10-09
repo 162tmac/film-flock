@@ -78,11 +78,35 @@ def flocks(id):
 
 @ app.route("/discover")
 def discover():
-    return render_template("discover.html")
+    flocks = mongo.db.flocks.find()
+    return render_template("discover.html.j2", flocks=flocks)
 
 
 @app.route("/search")
 def search():
+    if request.method == "POST":
+        # User makes a request on client side
+        user_request = request.form.get("query")
+
+        # Take the user's parameters and put them into a
+        # Python dictionary structured as an Elasticsearch query:
+        query_body = {
+            "query": {
+                "bool": {
+                    "must": {
+                        "match": {
+                            "some_field": user_request
+                        }
+                    }
+                }
+            }
+        }
+
+        # Pass the query dictionary to the 'body' parameter of the
+        # client's Search() method, and have it return results:
+        result = elastic_client.search(index="some_index", body=query_body)
+        print("total hits:", len(result["hits"]["hits"]))
+        return render_template("search.html", result=result)
     return render_template("search.html")
 
 

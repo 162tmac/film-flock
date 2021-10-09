@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Film Flock | Discover{% endblock %}
+{% block body %}
+  <div class="min-vh-100 py-4">
+    <div class="container">
+      <h1>Discover</h1>
+      <div>
+        <label for="search"></label>
+        <input type="text" name="search" id="search" placeholder="Search Collections">
+      </div>
+      <div class="container p-0">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-5 g-2 g-lg-2">
+          {% for flock in flocks %}
+            <a href={{ url_for("flocks", id=flock["_id"]) }} class="col mb-4">
+              <div class="card h-100">
+                <img src="../static/flock-of-birds.png" class="card-img-top h-75" alt="...">
+                <div class="card-body h-25">
+                  <h5 class="card-title">{{flock.name}}</h5>  
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
