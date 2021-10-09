@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 if os.path.exists("env.py"):
     import env
 from werkzeug.security import generate_password_hash, check_password_hash
+from elasticsearch import Elasticsearch
 
 app = Flask(__name__)
 
@@ -16,23 +17,66 @@ app.config.update(TEMPLATES_AUTO_RELOAD=True)
 
 mongo = PyMongo(app)
 
+elastic_client = Elasticsearch()
+
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if "user" in session:
+        return redirect("dashboard")
+    else:
+        return render_template("index.html")
 
 
-@app.route("/create")
+@app.route("/create", methods=["GET", "POST"])
 def create():
+    if request.method == "POST":
+        user_email = session.get('user')
+        user = mongo.db.users.find_one(
+            {"email": user_email}
+        )
+        flock = {
+            "creator_id": user["_id"],
+            "name": request.form.get("name"),
+            "films": [ObjectId("573a1390f29313caabcd4eaf")]
+        }
+        _id = mongo.db.flocks.insert_one(flock)
+        return redirect(url_for('flocks', id=_id.inserted_id))
     return render_template("create.html")
 
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    user_email = session.get('user')
+    user = mongo.db.users.find_one(
+        {"email": user_email}
+    )
+    my_films = mongo.db.flocks.find(
+        {"creator_id": user["_id"]}
+    )
+    return render_template("dashboard.html", films=my_films)
 
 
-@app.route("/discover")
+@app.route("/flocks/<id>")
+def flocks(id):
+    flock = mongo.db.flocks.aggregate([
+        {
+            "$match": {"_id": ObjectId(id)}
+        },
+        {
+            "$lookup":
+                {
+                    "from": "movies",
+                    "localField": "films",
+                    "foreignField": "_id",
+                    "as": "films"
+                }
+        },
+    ])
+    return render_template("flock_view.html.j2", flock=list(flock))
+
+
+@ app.route("/discover")
 def discover():
     return render_template("discover.html")
 
@@ -40,6 +84,18 @@ def discover():
 @app.route("/search")
 def search():
     return render_template("search.html")
+
+
+@app.route("/films")
+def films():
+    films = mongo.db.movies.find()
+    return render_template("films.html", films=films)
+
+
+@app.route("/films/<id>")
+def film_view(id):
+    film = mongo.db.movies.find_one({"_id": ObjectId(id)})
+    return render_template("film_view.html.j2", film=film)
 
 
 @app.route("/login", methods=["GET", "POST"])
