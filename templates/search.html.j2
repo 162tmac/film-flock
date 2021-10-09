@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Film Flock | Search{% endblock %}
+{% block body %}
+  <div class="min-vh-100 py-4">
+    <div class="container">
+      <h1>Search for movies</h1>
+      <form class="d-flex" method="post">
+        <input class="form-control w-50 mr-3" type="text" name="query" id="search" placeholder="Search Movies">
+        <button class="btn btn-primary" type="submit" >Search</button>
+      </form>
+      {% if results %}
+        <div class="container p-0 mt-2">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-5 g-2 g-lg-2">
+            {% for film in results %}
+              <a href={{ url_for("film_view", id=film["_id"]) }} class="col mb-4">
+                <div class="card h-100">
+                  <img src={{ film["poster"] if film["poster"] else "../static/flock-of-birds.png" }} class="card-img-top h-75" alt="...">
+                  <div class="card-body h-25">
+                    <h5 class="card-title">{{film.title}}</h5>  
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <p class="mt-5 ml-2">Your results will appear here.</p>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}
