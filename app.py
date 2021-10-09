@@ -51,10 +51,10 @@ def dashboard():
     user = mongo.db.users.find_one(
         {"email": user_email}
     )
-    my_films = mongo.db.flocks.find(
+    my_flocks = mongo.db.flocks.find(
         {"creator_id": user["_id"]}
     )
-    return render_template("dashboard.html", films=my_films)
+    return render_template("dashboard.html.j2", flocks=my_flocks)
 
 
 @app.route("/flocks/<id>")
