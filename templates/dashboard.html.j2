@@ -3,12 +3,12 @@
 {% block body %}
   <div class="min-vh-100 py-4">
     <div class="container">
-      <h1>Dashboard</h1>
+      <h1>My Flocks</h1>
       <div class="container row p-0">
-        <div class="col-12 col-md-6">
-          <h2>Created by me</h2>
+        <div class="col-12">
+          <h2>Movie collections created by me</h2>
             <div class="container p-0">
-              <div class="row row-cols-1 row-cols-lg-2 g-2 g-lg-2">
+              <div class="row row-cols-1 row-cols-lg-4 g-2 g-lg-2">
                 {% for flock in flocks %}
                   <a href={{ url_for("flocks", id=flock["_id"]) }} class="col mb-4">
                     <div class="card h-100">
@@ -21,43 +21,12 @@
                 {% endfor %}
                 <div class="col mb-4">
                   <div class="card h-100">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                       <h5 class="card-title">Create</h5>
                       <a href="{{ url_for('create') }}" class="btn btn-primary">Create a new collection</a>
                     </div>
                   </div>
                 </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-6">
-          <h2>Following</h2>
-          <div class="container p-0">
-            <div class="row row-cols-1 row-cols-lg-2 g-2 g-lg-2">
-              <div class="col mb-4">
-                <div class="card h-100">
-                  <img src="../static/flock-of-birds.png" class="card-img-top h-75" alt="...">
-                  <div class="card-body h-25">
-                    <h5 class="card-title">Collection title</h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col mb-4">
-                <div class="card h-100">
-                  <img src="../static/popcorn.jpg" class="card-img-top h-75" alt="...">
-                  <div class="card-body h-25">
-                    <h5 class="card-title">Collection title</h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col mb-4">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <h5 class="card-title">Discover</h5>
-                    <a href="{{ url_for('discover') }}" class="btn btn-primary">Discover more collections</a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

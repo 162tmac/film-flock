@@ -1,20 +1,12 @@
-jQuery(document).ready(function ($) {
-  $('.live-search-list li').each(function () {
-    $(this).attr('data-search-term', $(this).text().toLowerCase())
-  })
+var search = document.getElementById('film-search-container')
 
-  $('.live-search-box').on('keyup', function () {
-    var searchTerm = $(this).val().toLowerCase()
-
-    $('.live-search-list li').each(function () {
-      if (
-        $(this).filter('[data-search-term *= ' + searchTerm + ']').length > 0 ||
-        searchTerm.length < 1
-      ) {
-        $(this).show()
-      } else {
-        $(this).hide()
-      }
+filterFilms = function (films) {
+  var formInput = document.getElementById('film-search').value
+  if (formInput.length == 0 || formInput == '') return []
+  console.log(films)
+  console.log(
+    films.filter((films) => {
+      films.title.toLower().includes(formInput.toLower())
     })
-  })
-})
+  )
+}

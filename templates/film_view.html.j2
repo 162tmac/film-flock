@@ -1,5 +1,5 @@
 {% extends "layout.html.j2" %}
-{% block title %}Film Flock | Film{% endblock %}
+{% block title %}Film Flock | {{ film.title }}{% endblock %}
 {% block body %}
   <div class="min-vh-100 m-5">
     <div class="container">
@@ -24,7 +24,7 @@
           <p>Running time: {{ film.runtime }} mins</p>
           <p>Year: {{ film.year }}</p>
           <p>Description: {{ film.plot }}</p>
-          <button class="btn btn-primary">Add to collection</button>
+          <button class="d-none btn btn-primary">Add to collection</button>
         </div>
       </div>
     </div>

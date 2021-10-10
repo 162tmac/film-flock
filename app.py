@@ -32,22 +32,28 @@ def index():
 def create():
     if request.method == "POST":
         user_email = session.get('user')
+        name = request.form.get("name")
         user = mongo.db.users.find_one(
             {"email": user_email}
         )
+        my_flocks = mongo.db.flocks.find(
+            {"creator_id": user["_id"]}
+        )
+        for flock in my_flocks:
+            if flock["name"] == name:
+                flash(
+                    "You've already have a flock named {}. Please use another name.".format(name))
+                return render_template("create.html.j2", value=name)
         flock = {
             "creator_id": user["_id"],
-            "name": request.form.get("name"),
-            "films": request.form.getlist("movies")
+            "name": name,
         }
         _id = mongo.db.flocks.insert_one(flock)
         return redirect(url_for('flocks', id=_id.inserted_id))
-    films = mongo.db.movies.find()
-    print(films.count)
-    return render_template("create.html.j2", films=films)
+    return render_template("create.html.j2")
 
 
-@app.route("/dashboard")
+@ app.route("/dashboard")
 def dashboard():
     user_email = session.get('user')
     user = mongo.db.users.find_one(
@@ -59,8 +65,12 @@ def dashboard():
     return render_template("dashboard.html.j2", flocks=my_flocks)
 
 
-@app.route("/flocks/<id>")
+@ app.route("/flocks/<id>", methods=["GET", "POST"])
 def flocks(id):
+    user_email = session.get('user')
+    user = mongo.db.users.find_one(
+        {"email": user_email}
+    )
     flock = mongo.db.flocks.aggregate([
         {
             "$match": {"_id": ObjectId(id)}
@@ -75,7 +85,19 @@ def flocks(id):
                 }
         },
     ])
-    return render_template("flock_view.html.j2", flock=list(flock))
+    if request.method == "POST":
+        query = request.form.get("query")
+        results = mongo.db.movies.find({"$text": {"$search": query}})
+        return render_template("flock_view.html.j2", flock=list(flock)[0], user=user, results=list(results), query=query)
+    return render_template("flock_view.html.j2", flock=list(flock)[0], user=user)
+
+
+@ app.route("/add_to_flock/<flock_id>/<film_id>", methods=["POST"])
+def add_to_flock(flock_id, film_id):
+    mongo.db.flocks.update({'_id': ObjectId(flock_id)}, {
+        '$addToSet  ': {'films': ObjectId(film_id)}})
+    flash("Movie added to flock")
+    return redirect(url_for("flocks", id=flock_id))
 
 
 @ app.route("/discover")
@@ -84,7 +106,7 @@ def discover():
     return render_template("discover.html.j2", flocks=flocks)
 
 
-@app.route("/search", methods=["GET", "POST"])
+@ app.route("/search", methods=["GET", "POST"])
 def search():
     if request.method == "POST":
         query = request.form.get("query")
@@ -93,19 +115,19 @@ def search():
     return render_template("search.html.j2")
 
 
-@app.route("/films")
+@ app.route("/films")
 def films():
     films = mongo.db.movies.find()
     return render_template("films.html.j2", films=films)
 
 
-@app.route("/films/<id>")
+@ app.route("/films/<id>")
 def film_view(id):
     film = mongo.db.movies.find_one({"_id": ObjectId(id)})
     return render_template("film_view.html.j2", film=film)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@ app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         existing_user = mongo.db.users.find_one(
@@ -127,7 +149,7 @@ def login():
     return render_template('login.html.j2')
 
 
-@app.route("/register", methods=["GET", "POST"])
+@ app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         existing_user = mongo.db.users.find_one(
@@ -155,7 +177,7 @@ def register():
     return render_template("register.html.j2")
 
 
-@app.route("/logout")
+@ app.route("/logout")
 def logout():
     flash("You have been logged out")
     session.pop("user")

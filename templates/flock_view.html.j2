@@ -6,20 +6,63 @@
     <div class="container">
       <div class="container row p-0">
         <div class="container">
-          <h1>{{ flock[0]["name"] }}</h1>
+          <h1>{{ flock["name"] }}</h1>
           <div class="container p-0">
-            {% for film in flock[0]["films"] %}
-              <a href={{ url_for("film_view", id=film["_id"]) }} class="row row-cols-1 row-cols-lg-4 g-2 g-lg-2">
-                <div class="col mb-4">
-                  <div class="card">
-                    <img src={{ film["poster"] if film["poster"] else "../static/flock-of-birds.png" }} class="card-img-top h-75" alt="...">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ film["title"] }}</h5>
-                    </div>
+            {% if flock["creator_id"] == user["_id"] %}
+              <form class="d-flex" method="post">
+                <input class="form-control w-50 mr-3" type="text" name="query" id="movie-search" placeholder="Search Movies" value={{query}}>
+                <button class="btn btn-primary" type="submit" >Search</button>
+              </form>
+            {% endif %}
+            {% if results %}
+              {% if results|length == 0 %}
+                <p>No results</p>
+              {% else %}
+                <div class="container row p-3 bg-dark">
+                  <h2 class="text-light">Results:</h2>
+                  <div class="row row-cols-4 g-2 g-lg-2">
+                    {% for film in results %}
+                      <div>
+                        <div class="col mb-4">
+                          <div class="card h-100">
+                            <img src={{ film["poster"] if film["poster"] else "../static/flock-of-birds.png" }} class="card-img-top h-75" alt="...">
+                            <div class="card-body">
+                              <h5 class="card-title">{{ film["title"] }}</h5>
+                              <form action={{ url_for("add_to_flock", flock_id=flock["_id"], film_id=film["_id"]) }} method="post">
+                                <button class="btn btn-primary">
+                                  Add to flock
+                                </button>
+                              <form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
                   </div>
                 </div>
-              </a>
-            {% endfor %}
+              {% endif %}
+            {% endif %}
+            {% if flock["films"]|length == 0 %}
+              {% if flock["creator_id"] == user["_id"] %}
+                <p>You have no films yet in this flock. User the searchbar to add movies.</p>
+              {% else %}
+                <p>There are no films added yet to this flock.</p>
+              {% endif %}
+            {% endif %}
+            <div class="row row-cols-1 row-cols-lg-4 g-2 g-lg-2 mt-4">
+              {% for film in flock["films"] %}
+                <a href={{ url_for("film_view", id=film["_id"]) }} >
+                  <div class="col mb-4">
+                    <div class="card">
+                      <img src={{ film["poster"] if film["poster"] else "../static/flock-of-birds.png" }} class="card-img-top h-75" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ film["title"] }}</h5>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>
