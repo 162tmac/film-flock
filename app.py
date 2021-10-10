@@ -6,7 +6,6 @@ from bson.objectid import ObjectId
 if os.path.exists("env.py"):
     import env
 from werkzeug.security import generate_password_hash, check_password_hash
-from elasticsearch import Elasticsearch
 
 app = Flask(__name__)
 
@@ -16,8 +15,6 @@ app.secret_key = os.environ.get("SECRET_KEY")
 app.config.update(TEMPLATES_AUTO_RELOAD=True)
 
 mongo = PyMongo(app)
-
-elastic_client = Elasticsearch()
 
 
 @app.route("/")
