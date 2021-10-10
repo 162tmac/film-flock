@@ -25,7 +25,7 @@ def index():
     if "user" in session:
         return redirect("dashboard")
     else:
-        return render_template("index.html")
+        return render_template("index.html.j2")
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -96,7 +96,7 @@ def search():
 @app.route("/films")
 def films():
     films = mongo.db.movies.find()
-    return render_template("films.html", films=films)
+    return render_template("films.html.j2", films=films)
 
 
 @app.route("/films/<id>")
@@ -124,7 +124,7 @@ def login():
         else:
             flash("Incorrect Email and/or Password")
             return redirect(url_for("login"))
-    return render_template('login.html')
+    return render_template('login.html.j2')
 
 
 @app.route("/register", methods=["GET", "POST"])
