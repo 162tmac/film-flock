@@ -38,11 +38,13 @@ def create():
         flock = {
             "creator_id": user["_id"],
             "name": request.form.get("name"),
-            "films": [ObjectId("573a1390f29313caabcd4eaf")]
+            "films": request.form.getlist("movies")
         }
         _id = mongo.db.flocks.insert_one(flock)
         return redirect(url_for('flocks', id=_id.inserted_id))
-    return render_template("create.html")
+    films = mongo.db.movies.find()
+    print(films.count)
+    return render_template("create.html.j2", films=films)
 
 
 @app.route("/dashboard")
@@ -150,7 +152,7 @@ def register():
 
         session["user"] = request.form.get("email")
         flash("Registration successful!")
-    return render_template("register.html")
+    return render_template("register.html.j2")
 
 
 @app.route("/logout")
